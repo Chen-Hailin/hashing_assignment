@@ -1,14 +1,5 @@
 
 public class Hash_open_double extends Hash_open{
-	private String rehash(String matricNo){
-		StringBuilder sb = new StringBuilder();
-		char ch;
-		for (int i = 0; i < matricNo.length(); i++) {
-		    ch = (char)((matricNo.charAt(i)*2531)%997);
-		    sb.append(ch);
-		}
-		return sb.toString();
-	}
 	public Hash_open_double(){
 		super();
 	}
@@ -17,16 +8,16 @@ public class Hash_open_double extends Hash_open{
 		for (int i = 0; i < matricNo.length(); i++) {
 		    hash = hash*17 + matricNo.charAt(i);
 		}
-		int hash_value = (int)(hash % 991) + 3;
-		return hash_value;
+		int inc_hash = (int)(hash % 991) + 3;
+		return inc_hash;
 	}
 	public boolean hash_insert(String matricNo){
 		int hash_value = hash_func(matricNo);
 		int initial = hash_value;
-		int re_hash_value = double_hashing(matricNo);
+		int inc_hash = double_hashing(matricNo);
 		while (hash_table[hash_value] != "empty"){
 			//matricNo = rehash(matricNo, hash_value);
-			hash_value = (hash_value + re_hash_value) % 997;
+			hash_value = (hash_value + inc_hash) % 997;
 			if (initial == hash_value)
 				return false;
 		}
@@ -52,6 +43,7 @@ public class Hash_open_double extends Hash_open{
 				break;
 		}
 		rtn[1] = counter;
+		rtn[0] = (hash_value != initial)? hash_value : 1001;
 		return rtn;
 	}
 }

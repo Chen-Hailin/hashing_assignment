@@ -1,17 +1,24 @@
 import java.util.*;
 public class Hash_Application {
-	//private static Hash_close HashClose = new Hash_close();
-	//private static Hash_open HashOpen = new Hash_open();
 	private static Hash Hash;
 	private static random_matricNo random_ID = new random_matricNo(9);
 	public static void main(String[] args){
+		//use close addressing
 		Hash = new Hash_close();
-		test_profiling(Hash);
-		//small_test(Hash);
+		test_profiling(true);
+		test_profiling(false);
+		//use simple open addressing(linear probing)
 		Hash = new Hash_open();
-		test_profiling(Hash);
+		test_profiling(true);
+		test_profiling(false);
+		//use double open addressing
 		Hash = new Hash_open_double();
-		test_profiling(Hash);
+		test_profiling(true);
+		test_profiling(false);
+		//in case you want to see the hash table explicitly
+		
+		Hash = new Hash_open_double();
+		small_test();
 		
 	}
 	public static boolean insert(int size){
@@ -20,19 +27,26 @@ public class Hash_Application {
 		}
 		return true;
 	}
-	public static double[] test_search(int testcase, int datasize){
+	@SuppressWarnings("unchecked")
+	public static double[] test_search(int testcase, int datasize, boolean successful){
 		int[] result = new int[2];
 		double search_ops = 0;
 		double sum_time = 0;
 		double [] rtn = new double[2];
+		String random_str;
 		List <String> existing_data = Hash.data_set();
+		@SuppressWarnings("rawtypes")
 		LinkedHashSet exist_data = new LinkedHashSet();
 		exist_data.addAll(existing_data);
 		for (int i = 0; i < testcase; i++){
-			String random_str = existing_data.get(random_ID.random.nextInt(existing_data.size()));
-			//String random_str = random_ID.nextMatricNo();
-			//while (exist_data.contains(random_str))
-			//random_str = random_ID.nextMatricNo();
+			if(successful){
+				random_str = existing_data.get(random_ID.random.nextInt(existing_data.size()));
+			}
+			else{
+				random_str = random_ID.nextMatricNo();
+				while (exist_data.contains(random_str))
+				random_str = random_ID.nextMatricNo();
+			}
 			long startTime = System.nanoTime();
 			result = Hash.hash_search(random_str);
 			search_ops += result[1];
@@ -46,43 +60,36 @@ public class Hash_Application {
 		rtn[1] = search_ops;
 		return rtn;
 	}
-	public static void small_test(Hash Hash){
+	public static void small_test(){
 		insert(900);
 		Hash.print_table();
-		int[] results = Hash.hash_search("J0501352C");
-		System.out.println(results[0]+"-"+results[1]);
+		String random_str = Hash.data_set().get(random_ID.random.nextInt(Hash.data_set().size()));
+		int[] results = Hash.hash_search(random_str);
+		System.out.format("position: %d with search operations %d times\n"
+				+ "the searching matricNo. %s", results[0],results[1], random_str);
 	}
-	public static void test_profiling(Hash Hash){
-		int datasize;
+	public static void test_profiling(boolean successful){
 		double sum_time;
 		double search_ops;
 		double[] rtn = new double[2];
-		ArrayList<Double> search_ops_list;
-		datasize = -100;
-		for (int i = 0; i < 5; i++){
-			datasize += 200;
-			System.out.println("datasize: " + datasize);
-			search_ops_list = new ArrayList<Double>();
+		for (int datasize = 100; datasize < 1000; datasize += 200){
 			int testcase = 30000;
-				sum_time = 0;
-				search_ops = 0;
-				Hash.reset();
-				insert(datasize);
-				for(int k = 0; k < 10; k ++){
-					rtn = test_search(testcase, datasize);
-					sum_time += rtn[0];
-					search_ops += rtn[1];
-				}
-				sum_time /= 10;
-				search_ops /= 10;
-				search_ops_list.add(search_ops);
-				System.out.print("  CPU time: " + (int)sum_time + "ns");
-		
-			System.out.println();
-			for (int j = 0; j < search_ops_list.size(); j++){
-				System.out.format("  comparisons: %.1f",search_ops_list.get(j));
-			} 
-			System.out.println();
+			sum_time = 0;
+			search_ops = 0;
+			Hash.reset();
+			insert(datasize);
+			//test 10 times for different data set to get the average
+			for(int k = 0; k < 10; k ++){
+				rtn = test_search(testcase, datasize, successful);
+				sum_time += rtn[0];
+				search_ops += rtn[1];
+			}
+			sum_time /= 10;
+			search_ops /= 10;
+			//print results
+			System.out.format("datasize: %d\n"
+					+ "  CPU time: %d ns\n"
+					+ "  comparisons: %.1f\n", datasize, (int)sum_time, search_ops);
 		}
 	}
 }
