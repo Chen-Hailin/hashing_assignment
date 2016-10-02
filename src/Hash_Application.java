@@ -4,22 +4,31 @@ public class Hash_Application {
 	private static random_matricNo random_ID = new random_matricNo(9);
 	public static void main(String[] args){
 		//use close addressing
+		System.out.println("CLOSED ADDRESSING");
 		Hash = new Hash_close();
+		System.out.println("Successful cases:");
 		test_profiling(true);
+		System.out.println("Unsuccessful cases:");
 		test_profiling(false);
 		//use simple open addressing(linear probing)
+		System.out.println("LINEAR PROBING");
 		Hash = new Hash_open();
+		System.out.println("Successful cases:");
 		test_profiling(true);
+		System.out.println("Unsuccessful cases:");
 		test_profiling(false);
 		//use double open addressing
+		System.out.println("DOUBLE HASHING");
 		Hash = new Hash_open_double();
+		System.out.println("Successful cases:");
 		test_profiling(true);
+		System.out.println("Unsuccessful cases:");
 		test_profiling(false);
 		//in case you want to see the hash table explicitly
-		
+		/*
 		Hash = new Hash_open_double();
 		small_test();
-		
+		*/
 	}
 	public static boolean insert(int size){
 		for (int i = 0; i < size; i++){
@@ -87,9 +96,9 @@ public class Hash_Application {
 			sum_time /= 10;
 			search_ops /= 10;
 			//print results
-			System.out.format("datasize: %d\n"
-					+ "  CPU time: %d ns\n"
-					+ "  comparisons: %.1f\n", datasize, (int)sum_time, search_ops);
+			System.out.format("  datasize: %d\n"
+					+ "    CPU time: %d ns\n"
+					+ "    comparisons: %.1f\n", datasize, (int)sum_time, search_ops);
 		}
 	}
 }

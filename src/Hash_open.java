@@ -2,20 +2,8 @@ import java.util.*;
 //import java.io.*;
 import java.lang.*;
 public class Hash_open extends Hash{
-	//private String matricNo;
 	public final int table_size = 1000;
 	public String[] hash_table = new String[table_size];
-	//private int datasize = 0;
-	/*
-	public int hash_func(String matricNo){
-		long hash = 3;
-		for (int i = 0; i < matricNo.length(); i++) {
-		    hash = hash*11 + matricNo.charAt(i);
-		}
-		int hash_value = (int)(hash % 1000);
-		return hash_value;
-	}
-	*/
 	public Hash_open(){
 		reset();
 	}
@@ -32,14 +20,19 @@ public class Hash_open extends Hash{
 	}
 	public int[] hash_search(String matricNo){
 		int hash_value = hash_func(matricNo);
-		int initial = hash_value;
+		boolean found = false;
 		int counter = 1;
 		int[] rtn = {1001,0};
-		while(hash_table[hash_value] != matricNo){
+		while(hash_table[hash_value] != "empty"){
 			counter++;
 			hash_value = (hash_value + 1) % table_size;
-			if (initial == hash_value)
+			if (hash_table[hash_value] == matricNo){
+				found = true;
 				break;
+			}
+		}
+		if(found){
+			rtn[0] = hash_value;
 		}
 		rtn[1] = counter;
 		return rtn;
